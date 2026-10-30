@@ -1,0 +1,9 @@
+.data
+.data/**
+node_modules
+.git
+.claude
+.claude-flow
+*.pem
+keys.json
+
