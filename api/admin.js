@@ -65,8 +65,12 @@ export default route(["GET", "POST", "PUT", "DELETE"], async (req, res) => {
     const b = await readJSON(req);
     let who;
     try { who = await signIn(b.user, b.password); }
-    catch (e) { await event("admin-login-failed", "", ip); await limited("login-fail-all", "*", 60, 15 * 60e3); return bad(e.message, 401); }
-    await event("admin-login", "", "", 0, who.email);
+    catch (e) {
+      await event("admin-login-failed", "", ip).catch(() => {});
+      await limited("login-fail-all", "*", 60, 15 * 60e3).catch(() => {});
+      return bad(e.message, 401);
+    }
+    await event("admin-login", "", "", 0, who.email).catch(() => {});
     return send(res, 200, { ok: true, user: who }, { "set-cookie": sessionCookie(await makeSession(who), req) });
   }
   if (p === "forgot" && m === "POST") {
