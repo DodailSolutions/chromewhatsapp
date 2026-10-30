@@ -1,9 +1,10 @@
 // POST /api/release {key, installId} — the customer frees their key to move to a new computer.
 import { route, send, readJSON, ipOf, clean, CORS } from "../lib/http.js";
-import { q } from "../lib/db.js";
+import { q, ensureSchema } from "../lib/db.js";
 import { normKey, getLicense, event, limited } from "../lib/license.js";
 
 export default route(["POST"], async (req, res) => {
+  await ensureSchema();
   const ip = ipOf(req);
   if (await limited("rel", ip, 20, 3600e3)) return send(res, 429, { ok: false, error: "Too many requests" }, CORS);
   const b = await readJSON(req), key = normKey(b.key), l = await getLicense(key);

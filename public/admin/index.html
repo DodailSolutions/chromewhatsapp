@@ -4,61 +4,73 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Reach Licenses · Dodail Admin</title>
+<title>Dodail Reach · License Portal</title>
 <link rel="icon" href="/admin/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
 <link rel="stylesheet" href="/admin/admin.css">
 </head>
 <body>
-  <section id="login" class="login" hidden>
-    <form id="loginForm" class="logincard" autocomplete="on">
-      <img src="/admin/logo.png" alt="Dodail" class="lg">
-      <h1>Reach Licenses</h1>
-      <p>Sign in to manage Dodail Reach license keys.</p>
-      <label>Username<input id="lu" name="username" autocomplete="username" required></label>
-      <label>Password<input id="lp" name="password" type="password" autocomplete="current-password" required></label>
-      <p class="err" id="lerr" hidden></p>
-      <button class="btn pri" type="submit">Sign in</button>
-    </form>
+  <!-- Sign in / forgot / set password -->
+  <section id="auth" class="auth" hidden>
+    <div class="authwrap">
+      <div class="authbrand">
+        <img src="/admin/logo.png" alt="Dodail Solutions" class="lg">
+        <h1>Dodail Reach<br><span>License Portal</span></h1>
+        <p>Sell, activate and renew Dodail Reach licenses, track payments and manage your team.</p>
+        <ul class="authpts"><li>Licenses and free trials in one place</li><li>Plans, payments and GST-ready receipts</li><li>Team sign-in with roles</li></ul>
+      </div>
+      <div class="authcard">
+        <form id="loginForm" autocomplete="on">
+          <h2>Sign in</h2>
+          <p class="muted" id="loginHint">Use your Dodail team account.</p>
+          <label><span id="userLabel">Email</span><input id="lu" name="username" autocomplete="username" required></label>
+          <label>Password<input id="lp" name="password" type="password" autocomplete="current-password" required></label>
+          <p class="err" id="lerr" hidden></p>
+          <button class="btn pri wide" type="submit">Sign in</button>
+          <button class="linkbtn" type="button" id="forgotLink">Forgot password?</button>
+        </form>
+        <form id="forgotForm" hidden>
+          <h2>Reset your password</h2>
+          <p class="muted">Enter your team email. We'll send you a link to set a new password.</p>
+          <label>Email<input id="fe" type="email" autocomplete="email" required></label>
+          <p class="err" id="ferr" hidden></p><p class="okmsg" id="fok" hidden></p>
+          <button class="btn pri wide" type="submit">Send reset link</button>
+          <button class="linkbtn" type="button" id="backLogin">Back to sign in</button>
+        </form>
+        <form id="resetForm" hidden>
+          <h2 id="resetTitle">Set your password</h2>
+          <p class="muted" id="resetHint">Choose a password with at least 10 characters.</p>
+          <label>New password<input id="rp" type="password" minlength="10" autocomplete="new-password" required></label>
+          <label>Confirm password<input id="rp2" type="password" minlength="10" autocomplete="new-password" required></label>
+          <p class="err" id="rerr" hidden></p>
+          <button class="btn pri wide" type="submit">Save password and sign in</button>
+        </form>
+      </div>
+    </div>
   </section>
 
-  <div id="app" hidden>
-    <header class="top">
-      <div class="wrap topin">
-        <div class="brand"><img src="/admin/logo.png" alt="Dodail"><div><b>Reach Licenses</b><small>Dodail Solutions admin</small></div></div>
-        <div class="topact"><button class="btn ghost" id="settingsBtn">Settings</button><button class="btn ghost" id="logoutBtn">Sign out</button></div>
-      </div>
-    </header>
-    <main class="wrap main">
-      <div class="head">
-        <div><h1>Licenses</h1><p class="muted" id="sub">Loading…</p></div>
-        <div class="headact"><a class="btn" id="exportBtn" href="/admin/api/export.csv">Export CSV</a><button class="btn pri" id="genBtn">+ Generate keys</button></div>
-      </div>
-      <section class="kpis" id="kpis"></section>
-      <section class="revstrip" id="rev" aria-label="Revenue"></section>
-      <section class="grid3">
-        <div class="card"><div class="ch"><h2>Activations · last 30 days</h2></div><div id="chart" class="chart"></div></div>
-        <div class="card"><div class="ch"><h2>Renewals due</h2><span class="muted sm">next 7 days</span></div><ul id="renewals" class="renewals"></ul></div>
-        <div class="card"><div class="ch"><h2>Recent activity</h2></div><ul id="recent" class="recent"></ul></div>
-      </section>
-      <section class="card">
-        <div class="toolbar">
-          <input id="q" type="search" placeholder="Search key, business, name, phone, email…" aria-label="Search licenses">
-          <select id="sf" aria-label="Filter by status">
-            <option value="all">All licenses</option><option value="active">Active</option><option value="online">Online today</option><option value="expiring">Expiring in 7 days</option><option value="expired">Expired</option><option value="deactivated">Deactivated</option><option value="unused">Not activated yet</option>
-          </select>
-        </div>
-        <div class="tablewrap"><table class="tbl"><thead><tr><th>License key</th><th>Customer</th><th>Status</th><th>Expires</th><th>Last seen</th><th class="num">Contacts</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
-        <p class="empty" id="empty" hidden></p>
-      </section>
-    </main>
+  <!-- App -->
+  <div id="app" class="shell" hidden>
+    <aside class="side" aria-label="Main">
+      <div class="brand"><img src="/admin/logo.png" alt=""><div><b>Dodail Reach</b><small>License Portal</small></div></div>
+      <nav id="nav">
+        <a href="#dashboard" data-v="dashboard"><span class="ni">◧</span>Dashboard</a>
+        <a href="#licenses" data-v="licenses"><span class="ni">⌘</span>Licenses</a>
+        <a href="#payments" data-v="payments"><span class="ni">₹</span>Payments</a>
+        <a href="#plans" data-v="plans"><span class="ni">▤</span>Plans &amp; prices</a>
+        <a href="#team" data-v="team"><span class="ni">☺</span>Team</a>
+        <a href="#settings" data-v="settings"><span class="ni">⚙</span>Settings</a>
+      </nav>
+      <div class="sidefoot"><div class="who" id="who"></div><button class="btn ghost sm" id="logoutBtn" type="button">Sign out</button></div>
+    </aside>
+    <main class="main" id="main"></main>
   </div>
 
   <div class="scrim" id="scrim" hidden></div>
   <aside class="drawer" id="drawer" hidden aria-label="License details"></aside>
   <div class="modal" id="modal" hidden role="dialog" aria-modal="true"></div>
-  <div class="toast" id="toast" hidden></div>
+  <div class="toast" id="toast" role="status" hidden></div>
   <script src="/admin/admin.js"></script>
 </body>
 </html>

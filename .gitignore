@@ -4,3 +4,11 @@ node_modules/
 .vercel/
 .data/
 keys.json
+
+# signing keys and local secrets
+*.pem
+.env.*.local
+
+# assistant metadata
+.claude/
+.claude-flow/

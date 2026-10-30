@@ -1,9 +1,11 @@
 // POST /api/check {key, installId, version, stats} — Reach calls this every 6 hours and when WhatsApp Web opens.
 import { route, send, readJSON, ipOf, clean, CORS } from "../lib/http.js";
-import { q } from "../lib/db.js";
+import { q, ensureSchema } from "../lib/db.js";
 import { normKey, getLicense, signedFor, limited, event } from "../lib/license.js";
+import { clientExtras } from "../lib/store.js";
 
 export default route(["POST"], async (req, res) => {
+  await ensureSchema();
   const ip = ipOf(req);
   if (await limited("chk", ip, 240, 3600e3)) return send(res, 429, { ok: false, error: "Too many requests" }, CORS);
   const b = await readJSON(req), key = normKey(b.key), installId = clean(b.installId, 64);
@@ -20,8 +22,9 @@ export default route(["POST"], async (req, res) => {
   const cin = b.customer && typeof b.customer === "object" ? b.customer : {}, customer = Object.assign({}, l.customer);
   let changed = false;
   ["business", "name", "phone", "email", "city", "category"].forEach(f => { const v = clean(cin[f], f === "phone" ? 20 : 120); if (v && v !== customer[f]) { customer[f] = v; changed = true; } });
-  await q("UPDATE licenses SET last_seen = $2, version = $3, ip = $4, stats = COALESCE($5::jsonb, stats), customer = $6::jsonb WHERE key = $1",
-    [key, Date.now(), version, ip, s ? JSON.stringify(s) : null, JSON.stringify(customer)]);
+  const termsAt = Math.max(l.termsAt, Math.min(Date.now(), +b.termsAt || 0));
+  await q("UPDATE licenses SET last_seen = $2, version = $3, ip = $4, stats = COALESCE($5::jsonb, stats), customer = $6::jsonb, terms_at = $7 WHERE key = $1",
+    [key, Date.now(), version, ip, s ? JSON.stringify(s) : null, JSON.stringify(customer), termsAt]);
   if (changed && !l.customer.business && customer.business) await event("registered", key, customer.business);
-  send(res, 200, { ok: true, license: signedFor(l, installId) }, CORS);
+  send(res, 200, Object.assign({ ok: true, license: signedFor(l, installId) }, await clientExtras()), CORS);
 }, { cors: true });

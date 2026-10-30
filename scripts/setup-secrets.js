@@ -22,10 +22,13 @@ const escaped = pem.trim().replace(/\n/g, "\\n");
 
 console.log(`\nSigning key: ${source}\nPublic key (built into Reach): ${JSON.stringify({ kty: pub.kty, crv: pub.crv, x: pub.x, y: pub.y })}\n`);
 console.log("Paste these into Vercel → Project → Settings → Environment Variables (Production):\n");
-console.log(`ADMIN_USER=admin`);
-console.log(`ADMIN_PASSWORD=${password}      ← or choose your own (10+ characters)`);
 console.log(`LICENSE_PRIVATE_KEY=${escaped}`);
-console.log(`\nDATABASE_URL is added for you when you connect Neon (Vercel → Storage → Neon → Connect).\n`);
+console.log(`SUPABASE_URL=https://pdobgltfrxdnijdrzkyf.supabase.co`);
+console.log(`SUPABASE_ANON_KEY=<Supabase → Project Settings → API Keys → anon / publishable key>`);
+console.log(`SUPABASE_SERVICE_ROLE_KEY=<Supabase → Project Settings → API Keys → service_role / secret key>`);
+console.log(`DATABASE_URL=<Supabase → Connect → Transaction pooler URI (port 6543), with your database password>`);
+console.log(`ADMIN_OWNER_EMAIL=marketing@dodail.com`);
+console.log(`\nNo Supabase yet? Use ADMIN_USER=admin and ADMIN_PASSWORD=${password} instead of the SUPABASE_* and ADMIN_OWNER_EMAIL lines.\n`);
 
 if (args.includes("--write")) {
   const env = `DATABASE_URL=pglite:.data/db\nADMIN_USER=admin\nADMIN_PASSWORD=${password}\nLICENSE_PRIVATE_KEY="${escaped}"\n`;
