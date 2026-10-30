@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Reach Licenses · Dodail Admin</title>
+<link rel="icon" href="/admin/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+  <section id="login" class="login" hidden>
+    <form id="loginForm" class="logincard" autocomplete="on">
+      <img src="/admin/logo.png" alt="Dodail" class="lg">
+      <h1>Reach Licenses</h1>
+      <p>Sign in to manage Dodail Reach license keys.</p>
+      <label>Username<input id="lu" name="username" autocomplete="username" required></label>
+      <label>Password<input id="lp" name="password" type="password" autocomplete="current-password" required></label>
+      <p class="err" id="lerr" hidden></p>
+      <button class="btn pri" type="submit">Sign in</button>
+    </form>
+  </section>
+
+  <div id="app" hidden>
+    <header class="top">
+      <div class="wrap topin">
+        <div class="brand"><img src="/admin/logo.png" alt="Dodail"><div><b>Reach Licenses</b><small>Dodail Solutions admin</small></div></div>
+        <div class="topact"><button class="btn ghost" id="settingsBtn">Settings</button><button class="btn ghost" id="logoutBtn">Sign out</button></div>
+      </div>
+    </header>
+    <main class="wrap main">
+      <div class="head">
+        <div><h1>Licenses</h1><p class="muted" id="sub">Loading…</p></div>
+        <div class="headact"><a class="btn" id="exportBtn" href="/admin/api/export.csv">Export CSV</a><button class="btn pri" id="genBtn">+ Generate keys</button></div>
+      </div>
+      <section class="kpis" id="kpis"></section>
+      <section class="revstrip" id="rev" aria-label="Revenue"></section>
+      <section class="grid3">
+        <div class="card"><div class="ch"><h2>Activations · last 30 days</h2></div><div id="chart" class="chart"></div></div>
+        <div class="card"><div class="ch"><h2>Renewals due</h2><span class="muted sm">next 7 days</span></div><ul id="renewals" class="renewals"></ul></div>
+        <div class="card"><div class="ch"><h2>Recent activity</h2></div><ul id="recent" class="recent"></ul></div>
+      </section>
+      <section class="card">
+        <div class="toolbar">
+          <input id="q" type="search" placeholder="Search key, business, name, phone, email…" aria-label="Search licenses">
+          <select id="sf" aria-label="Filter by status">
+            <option value="all">All licenses</option><option value="active">Active</option><option value="online">Online today</option><option value="expiring">Expiring in 7 days</option><option value="expired">Expired</option><option value="deactivated">Deactivated</option><option value="unused">Not activated yet</option>
+          </select>
+        </div>
+        <div class="tablewrap"><table class="tbl"><thead><tr><th>License key</th><th>Customer</th><th>Status</th><th>Expires</th><th>Last seen</th><th class="num">Contacts</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+        <p class="empty" id="empty" hidden></p>
+      </section>
+    </main>
+  </div>
+
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="drawer" id="drawer" hidden aria-label="License details"></aside>
+  <div class="modal" id="modal" hidden role="dialog" aria-modal="true"></div>
+  <div class="toast" id="toast" hidden></div>
+  <script src="/admin/admin.js"></script>
+</body>
+</html>
