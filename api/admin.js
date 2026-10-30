@@ -58,10 +58,10 @@ export default route(["GET", "POST", "PUT", "DELETE"], async (req, res) => {
   // ---------- public: sign in, forgot, reset ----------
   if (p === "auth-mode" && m === "GET") return ok({ mode: supa() ? "supabase" : "password" });
   if (p === "login" && m === "POST") {
+    await ensureSchema().catch(() => {});
     if (await limited("login", ip, 8, 15 * 60e3)) return bad("Too many attempts. Wait 15 minutes.", 429);
     const all = await one("SELECT n, reset FROM rate_limits WHERE k = 'login-fail-all|*'").catch(() => null);
     if (all && Number(all.n) >= 60 && Number(all.reset) > Date.now()) return bad("Too many failed sign-ins. Wait 15 minutes.", 429);
-    await ensureSchema();
     const b = await readJSON(req);
     let who;
     try { who = await signIn(b.user, b.password); }
@@ -70,14 +70,16 @@ export default route(["GET", "POST", "PUT", "DELETE"], async (req, res) => {
     return send(res, 200, { ok: true, user: who }, { "set-cookie": sessionCookie(await makeSession(who), req) });
   }
   if (p === "forgot" && m === "POST") {
+    await ensureSchema().catch(() => {});
     if (await limited("forgot", ip, 5, 3600e3)) return bad("Too many requests. Try again later.", 429);
     const b = await readJSON(req);
+    if (!b?.email) return bad("Please enter your email.");
     try { await forgotPassword(b.email, originOf(req) + "/admin"); } catch (e) { return bad(e.message); }
     return ok({ message: "If that email is on the team, a reset link is on its way." });
   }
   if (p === "reset" && m === "POST") {
+    await ensureSchema().catch(() => {});
     if (await limited("reset", ip, 10, 3600e3)) return bad("Too many attempts. Try again later.", 429);
-    await ensureSchema();
     const b = await readJSON(req);
     let who; try { who = await setPasswordWithToken(b.accessToken, b.password); } catch (e) { return bad(e.message); }
     await event("password-set", "", "", 0, who.email);
