@@ -59,3 +59,12 @@ CREATE TABLE IF NOT EXISTS ai_usage (
   tokens  integer NOT NULL DEFAULT 0,
   PRIMARY KEY (key, month)
 );
+
+-- Supabase exposes the public schema through its REST API with the public anon key.
+-- RLS with no policies blocks that; this server connects as the table owner, so it is unaffected.
+ALTER TABLE licenses    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE events      ENABLE ROW LEVEL SECURITY;
+ALTER TABLE rate_limits ENABLE ROW LEVEL SECURITY;
+ALTER TABLE settings    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE builds      ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_usage    ENABLE ROW LEVEL SECURITY;
