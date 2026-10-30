@@ -12,3 +12,5 @@ keys.json
 # assistant metadata
 .claude/
 .claude-flow/
+.vercel
+.env*.local
